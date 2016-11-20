@@ -1,0 +1,238 @@
+/* --------------- */
+/* 休講 補講ページ */
+/* --------------- */
+#info_table{
+    margin:0 2%;
+    width: 98%;
+    border-collapse: separate;
+    border-spacing: 0px;
+    text-align: left;
+    line-height: 1.5;
+    border-top: 1px solid #ccc;
+}
+#info_table th{
+    font-weight: bold;
+    text-align: center;
+    vertical-align: bottom;
+    border-bottom: 1px solid #aaa;
+}
+#info_table td{
+    vertical-align: middle;
+    border-bottom: 1px solid #ccc;
+}
+
+.tr_today.tr_can{  /* 日付が今日 で 休 の行 */
+    background-color: #cff;
+}
+
+.tr_today.tr_sup{  /* 日付が今日 で 補 の行 */
+    background-color: #fc9;
+}
+
+.tab_today{ /* 日付が今日の文字列について */
+    font-weight: bold;
+    font-size:120%;
+}
+
+.tab_tomorrow{
+    font-size:105%;
+}
+
+#no_sub_info{ /* 表示すべき情報がありません */
+    text-align: center;
+}
+
+.tab_day{ /* 日付 */
+    word-break: keep-all; /* 単語の途中で改行させない */
+    width: 3em;
+}
+.th_state{
+    width: 3em;
+}
+.tab_state{ /* 休講・補講 */
+    text-decoration: none;
+    text-shadow:none;
+}
+.state_can{ /* 休講 */
+    color: #1e90ff;
+}
+.state_sup{ /* 補講 */
+    color: #f93;
+}
+.tab_time{ /* 次元 */
+    width: 13%;
+}
+.tab_sub{ /* 教科名 */
+}
+.tab_teach{ /* 担当 */
+    text-align: center;
+    width: 3em;
+}
+
+.tr_info{
+    width: 100%;
+    height: 50px;
+}
+.td_day{
+    text-align: center;
+    line-height: 1.2em;
+}
+.td_state{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: x-large;
+}
+.td_time{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: x-large;
+}
+.td_sub{
+
+}
+.td_teach{
+
+}
+
+.copy_right{
+    text-align: center;
+    vertical-align: middle;
+}
+
+/* 更新時間のフッター */
+#update_time{
+    text-align: center;
+    vertical-align: middle;
+}
+
+#update_msg{
+    margin:auto;
+    text-align: center;
+}
+
+/* ---------- */
+/* 設定ページ */
+/* ---------- */
+
+.setting_label{
+    font-size: large;
+    font-weight: bold;
+    display: inline-block;
+}
+#hidden_setting_content{
+    width:100%;
+    margin:auto;
+    text-align: center;
+}
+
+/* -------------------- */
+/* 非表示リストについて */
+/* -------------------- */
+#hidden_list_table tr{
+    width: 100%;
+}
+#hidden_list_table tr .tab_hidden_button{
+    /* 非表示ボタン */
+    min-width: 3.5em;
+}
+#hidden_list_table tr .tab_hidden_sub{
+    /* 非表示科目名 */
+    /* 非表示ボタンの残りが幅になる(はず) */
+}
+.no_hidden_sub{
+    text-align: center;
+}
+
+/* ------------ */
+/*   通知設定   */
+/* ------------ */
+
+.notifi_check_td{
+    width: 80%;
+}
+
+.notifi_time_td {
+    width: 20%;
+}
+
+/* ----------- */
+/* Aboutページ */
+/* ----------- */
+#about{
+    width: 100%;
+}
+#about_content{
+    width: 95%;
+    margin: 0 auto;
+    /* padding: 20px; */
+    text-align: left;
+}
+
+#about_content h3{
+    text-align: center;
+}
+
+#my_prof tr th{
+    text-align: "right";
+}
+#my_prof tr td{
+    text-align: "left";
+}
+
+/* ------------------------ */
+/* ライセンスページについて */
+/* ------------------------ */
+#license{
+    width: 100%;
+    margin: 0 auto;
+    text-align: left;
+}
+#license_content{
+    width: 95%;
+    margin: 0 auto;
+    text-align: left;
+}
+#license_content h3{
+    text-align: center;
+}
+
+/* ------------------------- */
+/* 詳細情報表示画面について  */
+/* ------------------------- */
+#dialog{
+    text-decoration: none;
+    text-shadow:none;
+    color: #282828;
+}
+
+#info_title{
+    font-size: 150%;
+}
+
+#detail_info{
+    width: 100%;
+}
+
+#detail_info tr th{
+    text-align: right;
+    vertical-align: middle;
+    min-width: 5em;
+}
+
+/* シェアタグ */
+#share_tag{
+    text-align: center;
+}
+
+.link_str{
+    cursor:pointer;
+    color:blue;
+    text-decoration:underline;
+}
+
+/* ---------------- */
+/* 全体に関わるもの */
+/* ---------------- */
+.right_content{
+    text-align: right;
+}

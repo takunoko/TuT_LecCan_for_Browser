@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
+        <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
+
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+
+        <!-- jquery-mobile関連のせってい -->
+        <!-- <link rel="stylesheet" type="text/css" href="js/jquery-mobile/jquery.mobile-1.3.1.min.css"> -->
+        <link rel="stylesheet" type="text/css" href="js/jquery-mobile_1.4.5/jquery.mobile-1.4.5.min.css">
+        <link rel="stylesheet" type="text/css" href="js/jquery-mobile_1.4.5/my_theme/themes_v1.2/my_theme_1.2.min.css">
+        <link rel="stylesheet" type="text/css" href="js/jquery-mobile_1.4.5/my_theme/themes_v1.2/jquery.mobile.icons.min.css">
+        <link rel="stylesheet" type="text/css" href="js/DateBox/css/jtsage-datebox.min.css">
+
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+
+        <!-- cordova のデフォルト読み込み -->
+        <!-- <script type="text/javascript" src="cordova.js"></script> -->
+        <!-- jquery, jquery-mobile関連のせってい -->
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="js/jquery-mobile_1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script type="text/javascript" src="js/DateBox/js/jtsage-datebox.min.js"></script>
+
+        <!-- クロスドメイン突破のために怪しげな何かを使う -->
+        <!-- ブラウザ限定 -->
+        <script type="text/javascript" src="js/jquery.xdomainajax.js"></script>
+
+        <!-- <title>TuT休講・補講Viewer</title> -->
+    </head>
+
+    <body>
+        <!-- トップ画面 -->
+        <div data-role="page" id="cancel_list" class="normal_content" data-theme="c">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
+                <h1>TuT 休講・補講</h1>
+                <a type="button" onClick="update_info()" id="update_button" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-refresh">更新</a>
+                <a href="#settings" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-gear">設定</a>
+            </div>
+            <div role="main" class="content" data-theme="a">
+                <div id="lec_can_list">
+                    <table id="info_table">
+                        <tr>
+                            <th class="th_day tab_day">日付</th>
+                            <th class="th_state tab_state">休/補</th>
+                            <th class="th_time tab_time">時限</th>
+                            <th class="th_sub tab_sub">科目</th>
+                            <th class="th_teach tab_teach">担当</th>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" id="update_time">
+                None
+                <!-- TuT 休講・補講Viewer  &copy; 2016 takunoko -->
+            </div>
+
+        </div>
+
+        <!-- 設定画面 -->
+        <div data-role="page" id="settings" class="normal_content" data-theme="c">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
+                <h1>設定</h1>
+                <!-- トップのアイコンは bullets, bars, calender どれがいいかな? -->
+                <a href="#cancel_list" onClick="disp_info()" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-bullets">トップ</a>
+                <a href="#about" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-info">About</a>
+            </div>
+            <div role="main" class="ui-content">
+                <div id="grade">
+                    <fieldset data-role="controlgroup">
+                        <legend class="setting_label">学年</legend>
+                        <select id="select_grade" name="学年">
+                            <option value="all" selected>全て</option>
+                            <option value="B1">B1</option>
+                            <option value="B2">B2</option>
+                            <option value="B3">B3</option>
+                            <option value="B4">B4</option>
+                            <option value="M1">M1</option>
+                            <option value="M2">M2</option>
+                        </select>
+                    </fieldset>
+                </div>
+                <div id="class">
+                    <fieldset data-role="controlgroup">
+                        <legend class="setting_label">学科</legend>
+                        <select id="select_class" name="学年">
+                            <option value="all" selected>全て</option>
+                            <option value="1">機械</option>
+                            <option value="2">電気・電子情報工学</option>
+                            <option value="3">情報・知能工学</option>
+                            <option value="4">環境・生命工学</option>
+                            <option value="5">建築・都市システム学</option>
+                        </select>
+                    </fieldset>
+                </div>
+                <div id="check_common">
+                    <label>
+                        <input id="com" name="com" type="checkbox" value="1" />開講学科が共通なものを表示
+                    </label>
+                    <!-- 正直、ここに書くのはダサい。 -->
+                </div>
+                <br>
+                <!-- <a href="#hidden_setting" onClick="disp_hidden_list()">非表示科目の設定</a> -->
+                <div id="hidden_list_div"> <!-- data-role="content"> -->
+                    <fieldset data-role="controlgroup">
+                        <legend class="setting_label">非表示科目</legend>
+                        <div id="hidden_setting_content">
+                            <table id="hidden_list_table">
+                                <!-- <tr><th>再描画</th><th class="hidden_sub_name">科目名</th></tr> -->
+                            </table>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="copy_right">
+                <!-- TuT 休講・補講Viewer  &copy; 2016 takunoko -->
+                TuT 休講・補講Viewer
+            </div>
+        </div>
+
+        <!-- About画面 -->
+        <div data-role="page" id="about" class="normal_content" data-theme="c">
+            <div data-role="header" data-position="fixed" data-tap-toggle="false">
+                <h1>About</h1>
+                <a href="#settings" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-gear">設定</a>
+                <a href="#license" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-star">License</a>
+            </div>
+            <div role="main" id="about_content">
+                <h3>免責事項</h3>
+                　このアプリケーションは豊橋技術科学大学の休講・補講情報を閲覧する非公式アプリです。<br />
+                　できるだけミスのないように制作しておりますが、このアプリケーションの使用により生じたいかなる不利益に対しても制作者は一切の責任を負いません。使用者の責任においてご使用ください。<br />
+                　定期的に大学公式サイトの<a href="https://www.ead.tut.ac.jp/board/main.aspx">休講・補講ページ</a>をご覧になることをお勧めします。<br />
+                <br />
+                　バグ・改善点などは製作者までおしらせ頂けると幸いです。
+                できる範囲で対応したいと考えております。
+
+                <h3>シェア</h3>
+                <div id="share_tag">
+                    多くの人に使ってもらえたら嬉しいです。
+                    <div id="android_share">
+                        <div class="qr_link">
+                            <img src="img/Download_QR.png" alt="Androidアプリ版 QRコードリンク画像">
+                        </div>
+                        <div class="sns_link">
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://play.google.com/store/apps/details?id=com.takunoko.tutLecCan" data-text="TuT休講・補講Viewer">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            <a href="http://line.me/R/msg/text/?TuT休講・補講Viewer [https://play.google.com/store/apps/details?id=com.takunoko.tutLecCan]">
+                                <img src="img/linebutton/164x40.png" width="82" height="20" alt="LINEで送る" />
+                            </a>
+                        </div>
+                        <div>Androidアプリ版</div>
+                    </div>
+
+                    <div id="browser_share">
+                        <div class="qr_link">
+                            <img src="img/Browser_QR.png" alt="ブラウザ版リンク QRコードリンク画像">
+                        </div>
+                        <div class="sns_link">
+                            <!-- まだこの辺のタグを書き換えてないよー -->
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://play.google.com/store/apps/details?id=com.takunoko.tutLecCan" data-text="TuT休講・補講Viewer">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+                            <a href="http://line.me/R/msg/text/?TuT休講・補講Viewer [https://play.google.com/store/apps/details?id=com.takunoko.tutLecCan]">
+                                <img src="img/linebutton/164x40.png" width="82" height="20" alt="LINEで送る" />
+                            </a>
+                        </div>
+                        <div>ブラウザ版</div>
+                    </div>
+                </div>
+                <h3>製作者</h3>
+                豊橋技術科学大学 2016年度 3年 3系<br />
+                <span>たくのこ</span>
+                <table id="my_prof">
+                    <tr>
+                        <th>Twitter</th>
+                        <td><a href="https://twitter.com/takunokko">@takunokko</a></td>
+                    </tr>
+                </table>
+            </div>
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="copy_right">
+                TuT 休講・補講Viewer
+            </div>
+        </div>
+
+        <!-- ライセンス表記 -->
+        <div data-role="page" id="license" class="normal_content" data-theme="c">
+            <div data-role="header" data-position="fixed">
+                <h1>License</h1>
+                <a href="#about" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-back">About</a>
+            </div>
+            <div role="main" id="license_content">
+                <h3>Apache License 2.0</h3>
+                　このアプリケーションは開発環境Cordovaを始め、Apache License, Version 2.0で配布されている成果物を含んでいます。<br>
+                <a href="http://www.apache.org/licenses/LICENSE-2.0">Apache License, Version 2.0</a><br><br>
+
+                <h3>MIT License</h3>
+                　このアプリケーションはjQueryを始め、MIT Licenseで配布される成果物を含んでいます。<br>
+                (MITライセンスはソースコード中に記載されます。)
+
+                <h3>TuT休講・補講Viewer</h3>
+                　このアプリケーションを利用した際に発生した損害や不利益に対して作者は一切の責任を負いかねます。
+                利用者の責任でご利用ください。<br>
+                <div class="right_content">&copy; 2016 Takunoko All rights Reserved.</div>
+
+            </div>
+            <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="copy_right">
+                TuT 休講・補講Viewer
+            </div>
+        </div>
+
+        <!-- 詳細表示画面 -->
+        <div data-role="page" id="dialog" data-close-btn="right" data-theme="b">
+            <div data-role="header">
+                <h1 id="info_title">詳細情報</h1>
+            </div>
+            <table id="detail_info">
+                <tr>
+                    <th>教科名</th>
+                    <td id="detail_sub"></td>
+                </tr>
+                <tr>
+                    <th>日付</th>
+                    <td id="detail_day"></td>
+                </tr>
+                <tr>
+                    <th>時限</th>
+                    <td id="detail_time">3</td>
+                </tr>
+                <tr>
+                    <th>担教員</th>
+                    <td id="detail_teacher"></td>
+                </tr>
+                <tr>
+                    <th>開講年次</th>
+                    <td id="detail_grade"></td>
+                </tr>
+                <tr>
+                    <th>開講学科</th>
+                    <td id="detail_class"></td>
+                </tr>
+                <tr>
+                    <th id="detail_tmp1_title">補講</th>
+                    <td id="detail_tmp1"></td>
+                </tr>
+                <tr>
+                    <th id="detail_tmp2_title">連絡</th>
+                    <td id="detail_tmp2"></td>
+                </tr>
+            </table>
+            <label id="sub_button_label">
+                <input id="sub_button" name="sub_button" type="checkbox" value="1"/>非表示科目に追加
+            </label>
+        </div>
+
+        <!-- JS読み込み -->
+        <!-- <script type="text/javascript" src="js/my_notification.js"></script> -->
+        <script type="text/javascript" src="js/update_info.js"></script>
+        <script type="text/javascript" src="js/settings.js"></script>
+
+        <!-- Admobの読み込み -->
+        <!-- <script type="text/javascript" src="js/admob.js"></script> -->
+    </body>
+</html>
