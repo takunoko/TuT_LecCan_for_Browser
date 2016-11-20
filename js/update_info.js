@@ -21,9 +21,7 @@ var today;
 var my_info = null;
 
 // 読み込み時に実行
-window.onload = function() { setTimeout(scrollTo, ( 0, 1), 100); } // URL行を隠す
 $(function(){
-
     update_info();
     // データベースに最初に接続?し、以後接続しっぱなし。
     // 最後のデータベースサイズはバイト単位。1科目20バイト(10文字)を想定して500科目名を登録可
@@ -197,11 +195,6 @@ function update_info(){
         success: function(res) {
             var dom_parser = new DOMParser();
             var dom_data = dom_parser.parseFromString(res["responseText"], "text/html");
-            // console.log("mogeeeee");
-            console.log(dom_data);
-            //
-            // Yahooさんがなんだかちょっと書き換えてるから変更が必要
-            // var tb_c_r = dom_data.getElementById('grvCancel');
             var tb_c_r = dom_data.getElementById('grvCancel').rows;
             var tb_s_r = dom_data.getElementById('grvSupplement').rows;
 
@@ -242,7 +235,7 @@ function set_database(tb_c_r, tb_s_r){
     for (var i = 1; i < tb_c_r.length; i++) {
         var row_data = [];
         row_data[0] = "休";
-        row_data[1] = Date.parse(tb_c_r[i].cells[1].innerText); // 日付を整数型に変換
+        row_data[1] = Date.parse(tb_c_r[i].cells[1].innerText.substring(0,9)); // 日付を整数型に変換
         for (var j = 2; j <= 8; j++){
             row_data[j] = tb_c_r[i].cells[j].innerText;
         }
@@ -253,7 +246,7 @@ function set_database(tb_c_r, tb_s_r){
     for (var i = 1, len = tb_s_r.length; i < len; i++) {
         var row_data = [];
         row_data[0] = "補";
-        row_data[1] = Date.parse(tb_s_r[i].cells[1].innerText); // 日付を整数型に変換
+        row_data[1] = Date.parse(tb_s_r[i].cells[1].innerText.substring(0,9)); // 日付を整数型に変換, 曜日はブラウザによってダメだったりするからパースして削除
         for (var j = 2; j <= 8; j++){
             row_data[j] = tb_s_r[i].cells[j].innerText;
         }
@@ -292,48 +285,51 @@ function disp_info(){
     match_str = get_regexp(my_data[0], my_data[1], my_data[2]);
     db.transaction(function(tx){
         // このへんの検索から。
-        var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" AND hidden_state IS NULL ORDER BY day ASC'
-            // var sql_code = 'SELECT * FROM '+info_table_name+' WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" ORDER BY day ASC';
-            tx.executeSql(sql_code, [], function(tx, results){
-                $('.tr_info').remove();   // 一度すべての情報を削除
-                for(var i=0; i<results.rows.length; i++){
-                    var row_data = "";
-                    var day_str = get_day_str(new Date(Number(results.rows.item(i).day)));
-                    if (day_str == "今日"){
-                        if (results.rows.item(i).state == "休"){
-                            row_data += '<tr class="tr_info tr_today tr_can" data-no="'+results.rows.item(i).no+'">';
-                        }else{
-                            row_data += '<tr class="tr_info tr_today tr_sup" data-no="'+results.rows.item(i).no+'">';
-                        }
-                        row_data += '<td class="td_day tab_day tab_today">' +day_str+ '</td>';
-                    }else if(day_str == "明日"){
-                        row_data += '<tr class="tr_info tr_tomorrow" data-no="'+results.rows.item(i).no+'">';
-                        row_data += '<td class="td_day tab_day tab_tomorrow">' +day_str+ '</td>';
-                    }else{ // 今日・明日以外
-                        row_data += '<tr class="tr_info" data-no="'+results.rows.item(i).no+'">';
-                        row_data += '<td class="td_day tab_day">' +day_str+ '</td>';
-                    }
-                    if (results.rows.item(i).state == "休"){
-                        row_data += '<td class="td_state tab_state state_can">';
-                    }else{
-                        row_data += '<td class="td_state tab_state state_sup">';
-                    }
-                    row_data += results.rows.item(i).state+ '</td>';
-                    row_data += '<td class="td_time tab_time">' +results.rows.item(i).time+ '</td>';
-                    row_data += '<td class="td_sub tab_sub">' +results.rows.item(i).subject+ '</td>';
-                    row_data += '<td class="td_teach tab_teach">' +results.rows.item(i).teacher+ '</td>';
-                    row_data += '</tr>';
-                    $('#info_table').append(row_data);
-                }
-                if(results.rows.length == 0){
-                    var row_data = '<tr class="tr_info" id="no_sub_info"><td colspan="5">表示すべき情報がありません。<td></tr>';
-                    $('#info_table').append(row_data);
-                }
+        // var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" AND hidden_state IS NULL ORDER BY day ASC';
+        var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) '; //WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" AND hidden_state IS NULL ORDER BY day ASC';
 
-                // 自分に関連する情報
-                my_info = results;
-                // set_notification(my_info);
-            }, errorCB);
+        console.log("SQL code: " + sql_code);
+        // var sql_code = 'SELECT * FROM '+info_table_name+' WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" ORDER BY day ASC';
+        tx.executeSql(sql_code, [], function(tx, results){
+            $('.tr_info').remove();   // 一度すべての情報を削除
+            for(var i=0; i<results.rows.length; i++){
+                var row_data = "";
+                var day_str = get_day_str(new Date(Number(results.rows.item(i).day)));
+                if (day_str == "今日"){
+                    if (results.rows.item(i).state == "休"){
+                        row_data += '<tr class="tr_info tr_today tr_can" data-no="'+results.rows.item(i).no+'">';
+                    }else{
+                        row_data += '<tr class="tr_info tr_today tr_sup" data-no="'+results.rows.item(i).no+'">';
+                    }
+                    row_data += '<td class="td_day tab_day tab_today">' +day_str+ '</td>';
+                }else if(day_str == "明日"){
+                    row_data += '<tr class="tr_info tr_tomorrow" data-no="'+results.rows.item(i).no+'">';
+                    row_data += '<td class="td_day tab_day tab_tomorrow">' +day_str+ '</td>';
+                }else{ // 今日・明日以外
+                    row_data += '<tr class="tr_info" data-no="'+results.rows.item(i).no+'">';
+                    row_data += '<td class="td_day tab_day">' +day_str+ '</td>';
+                }
+                if (results.rows.item(i).state == "休"){
+                    row_data += '<td class="td_state tab_state state_can">';
+                }else{
+                    row_data += '<td class="td_state tab_state state_sup">';
+                }
+                row_data += results.rows.item(i).state+ '</td>';
+                row_data += '<td class="td_time tab_time">' +results.rows.item(i).time+ '</td>';
+                row_data += '<td class="td_sub tab_sub">' +results.rows.item(i).subject+ '</td>';
+                row_data += '<td class="td_teach tab_teach">' +results.rows.item(i).teacher+ '</td>';
+                row_data += '</tr>';
+                $('#info_table').append(row_data);
+            }
+            if(results.rows.length == 0){
+                var row_data = '<tr class="tr_info" id="no_sub_info"><td colspan="5">表示すべき情報がありません。<td></tr>';
+                $('#info_table').append(row_data);
+            }
+
+            // 自分に関連する情報
+            my_info = results;
+            // set_notification(my_info);
+        }, errorCB);
     }, errorCB);
 
     var last_update_time = get_update_time();
@@ -360,7 +356,7 @@ function errorCB(err) {
 }
 // 成功時コールバック
 function successCB() {
-    //console.log("successCB!");
+    console.log("successCB!");
 }
 
 // 休講テーブルを作成するクエリ
@@ -449,7 +445,7 @@ function get_regexp(grade, cls, com){
             cls_str = '^.*'+cl+'.*';
         }
     }
-    console.log("cls_str:" + cls_str + "com: " + com);
+    console.log("cls_str:" + cls_str + " com: " + com);
 
     return [grade_str, cls_str];
 }
