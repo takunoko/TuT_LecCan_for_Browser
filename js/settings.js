@@ -22,6 +22,11 @@ $(function() {
             localStorage.setItem('com', false);
         }
     });
+    // settingsへのページ遷移ボタンのリンクを踏んだら
+    $('.link_settings').on('click', function(){
+        disp_hidden_list();
+        update_setting_display();
+    });
     // うまく機能してない?
     $('.link_str').click(function(){
         var link_url = $(this).attr('data-url');
@@ -112,4 +117,5 @@ function disp_hidden_list(){
             }
         }, errorCB);
     }, errorCB);
+    console.log("get hidden listが呼ばれた");
 }

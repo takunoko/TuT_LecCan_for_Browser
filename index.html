@@ -3,7 +3,6 @@
 <html lang="ja">
     <head>
         <meta charset="utf-8">
-        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
         <meta http-equiv="Content-Security-Policy" content="default-src * data:; style-src * 'unsafe-inline'; script-src * 'unsafe-inline' 'unsafe-eval'">
 
         <meta name="format-detection" content="telephone=no">
@@ -11,7 +10,6 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
 
         <!-- jquery-mobile関連のせってい -->
-        <!-- <link rel="stylesheet" type="text/css" href="js/jquery-mobile/jquery.mobile-1.3.1.min.css"> -->
         <link rel="stylesheet" type="text/css" href="js/jquery-mobile_1.4.5/jquery.mobile-1.4.5.min.css">
         <link rel="stylesheet" type="text/css" href="js/jquery-mobile_1.4.5/my_theme/themes_v1.2/my_theme_1.2.min.css">
         <link rel="stylesheet" type="text/css" href="js/jquery-mobile_1.4.5/my_theme/themes_v1.2/jquery.mobile.icons.min.css">
@@ -20,7 +18,6 @@
         <link rel="stylesheet" type="text/css" href="css/style.css">
 
         <!-- cordova のデフォルト読み込み -->
-        <!-- <script type="text/javascript" src="cordova.js"></script> -->
         <!-- jquery, jquery-mobile関連のせってい -->
         <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="js/jquery-mobile_1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -30,16 +27,25 @@
         <!-- ブラウザ限定 -->
         <script type="text/javascript" src="js/jquery.xdomainajax.js"></script>
 
-        <!-- <title>TuT休講・補講Viewer</title> -->
+        <title>TuT休講・補講Viewer</title>
     </head>
+
+    <!-- アドセンスリンク -->
+    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+        (adsbygoogle = window.adsbygoogle || []).push({
+            google_ad_client: "ca-pub-7793625773402990",
+            enable_page_level_ads: true
+        });
+    </script>
 
     <body>
         <!-- トップ画面 -->
         <div data-role="page" id="cancel_list" class="normal_content" data-theme="c">
             <div data-role="header" data-position="fixed" data-tap-toggle="false">
                 <h1>TuT 休講・補講</h1>
-                <a type="button" onClick="update_info()" id="update_button" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-refresh">更新</a>
-                <a href="#settings" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-gear">設定</a>
+                <a type="button"  id="update_button" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-refresh">更新</a>
+                <a href="#settings" class="link_settings ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-gear">設定</a>
             </div>
             <div role="main" class="content" data-theme="a">
                 <div id="lec_can_list">
@@ -56,7 +62,6 @@
             </div>
             <div data-role="footer" data-position="fixed" data-tap-toggle="false" id="update_time">
                 None
-                <!-- TuT 休講・補講Viewer  &copy; 2016 takunoko -->
             </div>
 
         </div>
@@ -126,7 +131,7 @@
         <div data-role="page" id="about" class="normal_content" data-theme="c">
             <div data-role="header" data-position="fixed" data-tap-toggle="false">
                 <h1>About</h1>
-                <a href="#settings" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-gear">設定</a>
+                <a href="#settings" class="link_settings ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-gear">設定</a>
                 <a href="#license" class="ui-btn ui-shadow ui-corner-all ui-btn-icon-notext ui-btn-b ui-icon-star">License</a>
             </div>
             <div role="main" id="about_content">
@@ -157,13 +162,12 @@
 
                     <div id="browser_share">
                         <div class="qr_link">
-                            <img src="img/Browser_QR.png" alt="ブラウザ版リンク QRコードリンク画像">
+                            <img src="img/tutleccan_link.png" alt="ブラウザ版リンク QRコードリンク画像">
                         </div>
                         <div class="sns_link">
-                            <!-- まだこの辺のタグを書き換えてないよー -->
-                            <a href="https://twitter.com/share" class="twitter-share-button" data-url="https://play.google.com/store/apps/details?id=com.takunoko.tutLecCan" data-text="TuT休講・補講Viewer">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+                            <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://localhost/LecCan_Browser/" data-text="TuT休講・補講Viewer (ブラウザ版)" data-via="takunokko">Tweet</a> <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
-                            <a href="http://line.me/R/msg/text/?TuT休講・補講Viewer [https://play.google.com/store/apps/details?id=com.takunoko.tutLecCan]">
+                            <a href="http://line.me/R/msg/text/?TuT休講・補講Viewer (ブラウザ版)[http://tutleccan.takunoko.com/]">
                                 <img src="img/linebutton/164x40.png" width="82" height="20" alt="LINEで送る" />
                             </a>
                         </div>
@@ -204,7 +208,6 @@
                 　このアプリケーションを利用した際に発生した損害や不利益に対して作者は一切の責任を負いかねます。
                 利用者の責任でご利用ください。<br>
                 <div class="right_content">&copy; 2016 Takunoko All rights Reserved.</div>
-
             </div>
             <div data-role="footer" data-position="fixed" data-tap-toggle="false" class="copy_right">
                 TuT 休講・補講Viewer
@@ -254,13 +257,14 @@
                 <input id="sub_button" name="sub_button" type="checkbox" value="1"/>非表示科目に追加
             </label>
         </div>
+    </div>
 
-        <!-- JS読み込み -->
-        <!-- <script type="text/javascript" src="js/my_notification.js"></script> -->
-        <script type="text/javascript" src="js/update_info.js"></script>
-        <script type="text/javascript" src="js/settings.js"></script>
+    <!-- JS読み込み -->
+    <!-- <script type="text/javascript" src="js/my_notification.js"></script> -->
+    <script type="text/javascript" src="js/settings.js"></script>
+    <script type="text/javascript" src="js/update_info.js"></script>
 
-        <!-- Admobの読み込み -->
-        <!-- <script type="text/javascript" src="js/admob.js"></script> -->
-    </body>
+    <!-- Admobの読み込み -->
+    <!-- <script type="text/javascript" src="js/admob.js"></script> -->
+</body>
 </html>

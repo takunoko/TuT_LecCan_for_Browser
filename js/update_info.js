@@ -3,8 +3,8 @@
 // 定数
 // var lec_can_page_url="http://192.168.10.101/tut_lec_can/test2.html"; // 寮ローカル環境
 // var lec_can_page_url="http://localhost/tut_lec_can/test2.html"; // PC内テスト環境
-// var lec_can_page_url="http://ie.takunoko.com/test2.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
-var lec_can_page_url="https://www.ead.tut.ac.jp/board/main.aspx"; // 本番環境
+var lec_can_page_url="http://ie.takunoko.com/test2.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
+// var lec_can_page_url="https://www.ead.tut.ac.jp/board/main.aspx"; // 本番環境
 
 // データベース関連
 var db_name = "info_db";
@@ -235,7 +235,7 @@ function set_database(tb_c_r, tb_s_r){
     for (var i = 1; i < tb_c_r.length; i++) {
         var row_data = [];
         row_data[0] = "休";
-        row_data[1] = Date.parse(tb_c_r[i].cells[1].innerText.substring(0,9)); // 日付を整数型に変換
+        row_data[1] = Date.parse(tb_c_r[i].cells[1].innerText.substring(0,10)); // 日付を整数型に変換
         for (var j = 2; j <= 8; j++){
             row_data[j] = tb_c_r[i].cells[j].innerText;
         }
@@ -246,7 +246,7 @@ function set_database(tb_c_r, tb_s_r){
     for (var i = 1, len = tb_s_r.length; i < len; i++) {
         var row_data = [];
         row_data[0] = "補";
-        row_data[1] = Date.parse(tb_s_r[i].cells[1].innerText.substring(0,9)); // 日付を整数型に変換, 曜日はブラウザによってダメだったりするからパースして削除
+        row_data[1] = Date.parse(tb_s_r[i].cells[1].innerText.substring(0,10)); // 日付を整数型に変換, 曜日はブラウザによってダメだったりするからパースして削除
         for (var j = 2; j <= 8; j++){
             row_data[j] = tb_s_r[i].cells[j].innerText;
         }
@@ -285,11 +285,8 @@ function disp_info(){
     match_str = get_regexp(my_data[0], my_data[1], my_data[2]);
     db.transaction(function(tx){
         // このへんの検索から。
-        // var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" AND hidden_state IS NULL ORDER BY day ASC';
-        var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) '; //WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" AND hidden_state IS NULL ORDER BY day ASC';
-
-        console.log("SQL code: " + sql_code);
-        // var sql_code = 'SELECT * FROM '+info_table_name+' WHERE grade REGEXP "'+match_str[0]+'" AND class REGEXP "'+match_str[1]+'" ORDER BY day ASC';
+        var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) ' +match_str+ ' AND hidden_state IS NULL ORDER BY day ASC';
+        // console.log("SQL code: " + sql_code);
         tx.executeSql(sql_code, [], function(tx, results){
             $('.tr_info').remove();   // 一度すべての情報を削除
             for(var i=0; i<results.rows.length; i++){
@@ -401,19 +398,24 @@ function get_update_time(){
 }
 
 // 設定情報からデータベース検索の正規表現を作成する
+// android版と関数の仕様が結構異なる。
 function get_regexp(grade, cls, com){
-    var grade_str, cls_str;
+    var sql_str = '';
+    sql_str += ' WHERE';
 
+    var grade_str = ' grade LIKE';
     if(grade == 'all'){
-        grade_str = '^.*';
+        grade_str += ' "%"';
     }else{
-        grade_str = '^.*'+grade+'.*';
+        grade_str += ' "%'+grade+'%"';
     }
+    sql_str += grade_str;
 
     // クラスの判定
+    var cl = "";
     switch (cls){
         case 'all':
-            cl = '';
+            cl = 'all';
             break;
         case '1':
             cl = '機械';
@@ -437,17 +439,16 @@ function get_regexp(grade, cls, com){
     }
 
     if(cl == 'all'){
-        cls_str = '^.*';
+        cls_str = '';
     }else{
         if(com == 'true'){
-            cls_str = '^.*('+cl+'|共通).*';
+            sql_str += ' AND (class LIKE "%' +cl+ '%" OR class LIKE "%共通%")';
         }else{
-            cls_str = '^.*'+cl+'.*';
+            sql_str += ' AND class LIKE "%' +cl+ '%"';
         }
     }
-    console.log("cls_str:" + cls_str + " com: " + com);
 
-    return [grade_str, cls_str];
+    return sql_str;
 }
 
 
@@ -539,7 +540,6 @@ function space_harf(string){
 $(function() {
     // テーブルをクリックした時の動作
     $(document).on( 'click', '.tr_info', function(){
-        console.log("テーブルクリック");
         var no = Number($(this).attr('data-no'));
         db.transaction(function(tx){
             var query_str = 'SELECT * FROM '+info_table_name+ ' WHERE no='+no;
