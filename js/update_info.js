@@ -1,7 +1,6 @@
 // This is a JavaScript file
 
 // 定数
-// var lec_can_page_url="http://192.168.10.101/tut_lec_can/test2.html"; // 寮ローカル環境
 // var lec_can_page_url="http://localhost/tut_lec_can/test2.html"; // PC内テスト環境
 var lec_can_page_url="http://ie.takunoko.com/test2.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
 // var lec_can_page_url="https://www.ead.tut.ac.jp/board/main.aspx"; // 本番環境
