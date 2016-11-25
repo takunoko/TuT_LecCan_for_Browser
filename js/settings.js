@@ -66,9 +66,9 @@ function update_setting_display(){
     $("#select_class option").attr("selected", false);
 
     $("#select_grade").val(my_data[0]).selectmenu('refresh');   // 見た目の変更だけならこれだけでもoK?
-    // $("#select_grade option[value=" + my_data[0] + "]").attr("selected", true);
     $("#select_class").val(my_data[1]).selectmenu('refresh');
-    // $("#select_class option[value=" + my_data[1] + "]").attr("selected", true);
+    $("#select_grade option[value=" + my_data[0] + "]").attr("selected", true); // 本当の値の入れ替え。この設定を入れたらうまくいく？
+    $("#select_class option[value=" + my_data[1] + "]").attr("selected", true); // 入れないと、iPhoneのsafariでなんか変更をミスる?
 
     if(my_data[2] == "true"){
         $('#com').prop('checked', true).checkboxradio().checkboxradio("refresh");;
@@ -117,5 +117,4 @@ function disp_hidden_list(){
             }
         }, errorCB);
     }, errorCB);
-    console.log("get hidden listが呼ばれた");
 }
