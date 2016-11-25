@@ -179,6 +179,20 @@
     text-align: "left";
 }
 
+/* SNSリンク関連 */
+#shere_client{
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    /* 長くなるのでベンダープレフィックスの記述は省略 */
+}
+.shere_table{
+    width: 50%;
+}
+.shere_table .qr_link img{
+    width: 90%;
+}
+
 /* ------------------------ */
 /* ライセンスページについて */
 /* ------------------------ */
