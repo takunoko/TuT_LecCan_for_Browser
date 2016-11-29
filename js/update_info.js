@@ -3,7 +3,8 @@
 // 定数
 // var lec_can_page_url="http://localhost/tut_lec_can/test2.html"; // PC内テスト環境
 // var lec_can_page_url="http://ie.takunoko.com/test4.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
-var lec_can_page_url="https://www.ead.tut.ac.jp/board/main.aspx"; // 本番環境
+var lec_can_page_url="http://ie.takunoko.com/www/LecCan_list.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
+// var lec_can_page_url="https://www.ead.tut.ac.jp/board/main.aspx"; // 本番環境
 
 // データベース関連
 var db_name = "info_db";
@@ -183,6 +184,8 @@ function update_info(){
     }
     */
 
+    // クロスドメインのカベを超えるやり方。
+    // YahooのサービスYQLを利用している。
     $.ajax({
         url: lec_can_page_url,
         type: 'GET',
