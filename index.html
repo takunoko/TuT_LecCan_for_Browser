@@ -20,7 +20,17 @@
 
         <link rel="stylesheet" type="text/css" href="css/style.css">
 
-        <!-- cordova のデフォルト読み込み -->
+        <!-- GoogleAnalyticsの設定 -->
+        <!-- ようわからんけど、これで動くのかな -->
+        <script>
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-57303632-7', 'auto');
+            ga('send', 'pageview');
+        </script>
+
         <!-- jquery, jquery-mobile関連のせってい -->
         <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
         <script type="text/javascript" src="js/jquery-mobile_1.4.5/jquery.mobile-1.4.5.min.js"></script>
@@ -32,6 +42,8 @@
 
         <title>TuT休講・補講Viewer</title>
     </head>
+
+
 
     <!-- アドセンスリンク -->
     <!-- 起動時にピヨッっと出てきて、引っ込めれば引っ込む仕様みたい -->
