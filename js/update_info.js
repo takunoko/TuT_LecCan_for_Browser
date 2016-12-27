@@ -1,10 +1,6 @@
-// This is a JavaScript file
-
-// 定数
-// var lec_can_page_url="http://localhost/tut_lec_can/test2.html"; // PC内テスト環境
-// var lec_can_page_url="http://ie.takunoko.com/test4.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
-var lec_can_page_url="http://ie.takunoko.com/www/LecCan_list.html";   // ここの違いでちょっとdomの取得が異なる。 本番環境と同じ
-// var lec_can_page_url="https://www.ead.tut.ac.jp/board/main.aspx"; // 本番環境
+// 情報取得元URL
+// var lec_can_page_url="http://ie.takunoko.com/www/pcboard.html";    // 新学校サイト 自宅テストファイル
+var lec_can_page_url="https://kyomu.office.tut.ac.jp/portal/Public/Board/BoardList.aspx";   // 新学校サイト
 
 // データベース関連
 var db_name = "info_db";
@@ -197,8 +193,10 @@ function update_info(){
         success: function(res) {
             var dom_parser = new DOMParser();
             var dom_data = dom_parser.parseFromString(res["responseText"], "text/html");
-            var tb_c_r = dom_data.getElementById('grvCancel').rows;
-            var tb_s_r = dom_data.getElementById('grvSupplement').rows;
+            // var tb_c_r = dom_data.getElementById('grvCancel').rows;
+            var tb_c_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvCancel').rows;
+            // var tb_s_r = dom_data.getElementById('grvSupplement').rows;
+            var tb_s_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvSupplement').rows;
 
             set_database(tb_c_r, tb_s_r);
             disp_info();
