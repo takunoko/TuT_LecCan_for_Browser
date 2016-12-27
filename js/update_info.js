@@ -147,39 +147,6 @@ function show_load_error(){
 
 // サーバから情報を取得してデータベースの内容を更新する
 function update_info(){
-    /* 通常のXMLHttpRequestではクロスドメインのカベを超えられない。
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', lec_can_page_url, true); // サーバーから非同期でデータを取得
-    xhr.responseType = 'document';  // レスポンス型をDocument(DOM形式)にする
-    xhr.timeout = 10000;            // 10秒経ってもデータが取得できなかったら失敗とする。 (うまく行ってない気がする。未対応?)
-    xhr.onload = function(e){       // コールバック関数的な...?
-        dom_data = xhr.responseXML;
-        var tb_c_r = dom_data.getElementById('grvCancel').rows;
-        var tb_s_r = dom_data.getElementById('grvSupplement').rows;
-
-        set_database(tb_c_r, tb_s_r);
-        disp_info();
-
-        setTimeout(function() {
-            today = new Date();
-            var full_date_str = get_full_date(today);
-            $.mobile.loading( "show", {
-                html: '<div id="update_msg">データを更新しました<br />' + full_date_str + '</div>',
-                textVisible: true
-                    // textonly: true
-            });
-
-            // 最終更新時刻を更新
-            localStorage.setItem('last_update_time', full_date_str);
-            $("#update_time").text("Update: " + get_update_time());
-            // 2秒間表示
-            setTimeout(function() {
-                $.mobile.loading("hide");
-            },2000);
-        },500); // 読み込みに最低でも0.5秒与える。読み込んでるっぽく見せる。
-    }
-    */
-
     // クロスドメインのカベを超えるやり方。
     // YahooのサービスYQLを利用している。
     $.ajax({
@@ -236,7 +203,7 @@ function set_database(tb_c_r, tb_s_r){
         var row_data = [];
         row_data[0] = "休";
         row_data[1] = Date.parse(tb_c_r[i].cells[1].innerText.substring(0,10)); // 日付を整数型に変換
-        for (var j = 2; j <= 8; j++){
+        for (var j = 2; j <= 9; j++){
             row_data[j] = tb_c_r[i].cells[j].innerText;
         }
         row_data[4] = space_harf(tb_c_r[i].cells[4].innerText);
@@ -247,7 +214,7 @@ function set_database(tb_c_r, tb_s_r){
         var row_data = [];
         row_data[0] = "補";
         row_data[1] = Date.parse(tb_s_r[i].cells[1].innerText.substring(0,10)); // 日付を整数型に変換, 曜日はブラウザによってダメだったりするからパースして削除
-        for (var j = 2; j <= 8; j++){
+        for (var j = 2; j <= 9; j++){
             row_data[j] = tb_s_r[i].cells[j].innerText;
         }
         row_data[4] = space_harf(tb_s_r[i].cells[4].innerText);
@@ -266,7 +233,7 @@ function set_database(tb_c_r, tb_s_r){
 // 休講・補講データの挿入
 function insert_data(tx, data){
     tx.executeSql('INSERT INTO '+info_table_name+' (state, day, time, subject, teacher, grade, class, tmp1, tmp2)\
-            VALUES ("'+data[0]+'", "'+data[1]+'", "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[8]+'")');
+            VALUES ("'+data[0]+'", "'+data[1]+'", "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[9]+'")');
 }
 
 // infoテーブルの中身を空にする
