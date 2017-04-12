@@ -1,10 +1,12 @@
 // 情報取得元URL
 // var lec_can_page_url="http://ie.takunoko.com/www/pcboard.html";    // 新学校サイト 自宅テストファイル
 var lec_can_page_url="https://kyomu.office.tut.ac.jp/portal/Public/Board/BoardList.aspx";   // 新学校サイト
+// var lec_can_page_url="http://ie.takunoko.com/BoardList.html" // 自宅テストページ(2017/04/12)
 
 // データベース関連
 var db_name = "info_db";
-var info_table_name = "info_table";
+// var info_table_name = "info_table";
+var info_table_name = "info_table_v2";
 var hidden_table_name = "hidden_list"
 var db;
 
@@ -203,9 +205,13 @@ function set_database(tb_c_r, tb_s_r){
         var row_data = [];
         row_data[0] = "休";
         row_data[1] = Date.parse(tb_c_r[i].cells[1].innerText.substring(0,10)); // 日付を整数型に変換
-        for (var j = 2; j <= 9; j++){
+        for (var j = 2; j <= 6; j++){
             row_data[j] = tb_c_r[i].cells[j].innerText;
         }
+        row_data[7] = ""; // ダミーデータの挿入
+        row_data[8] = tb_c_r[i].cells[7].innerText; // 補講に合わせてデータをずらす
+        row_data[9] = tb_c_r[i].cells[8].innerText; // 補講にあわせてデータをずらす
+
         row_data[4] = space_harf(tb_c_r[i].cells[4].innerText);
         info_data.push(row_data);
     }
@@ -232,8 +238,8 @@ function set_database(tb_c_r, tb_s_r){
 
 // 休講・補講データの挿入
 function insert_data(tx, data){
-    tx.executeSql('INSERT INTO '+info_table_name+' (state, day, time, subject, teacher, grade, class, tmp1, tmp2)\
-            VALUES ("'+data[0]+'", "'+data[1]+'", "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[9]+'")');
+    tx.executeSql('INSERT INTO '+info_table_name+' (state, day, time, subject, teacher, grade, class, room, tmp1, tmp2)\
+            VALUES ("'+data[0]+'", "'+data[1]+'", "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[8]+'", "'+data[9]+'")');
 }
 
 // infoテーブルの中身を空にする
@@ -326,7 +332,7 @@ function successCB() {
 // 休講テーブルを作成するクエリ
 function create_info_table(tx) {
     // テーブルが作成されていない場合にテーブルを作成する。
-    tx.executeSql('CREATE TABLE IF NOT EXISTS '+info_table_name+' ( no integer primary key, state, day, time, subject, teacher, grade, class, tmp1, tmp2)');
+    tx.executeSql('CREATE TABLE IF NOT EXISTS '+info_table_name+' ( no integer primary key, state, day, time, subject, teacher, grade, class, room, tmp1, tmp2)');
     // 番号, 休/補, 日付, 時限, 教科名, 教員名, 学年, 学科
     // tmp1: 学生への連絡/教室, tmp2: 補講の予定/備考
 }
@@ -409,7 +415,7 @@ function get_regexp(grade, cls, com){
         cls_str = '';
     }else{
         if(com == 'true'){
-            sql_str += ' AND (class LIKE "%' +cl+ '%" OR class LIKE "%共通%")';
+            sql_str += ' AND (class LIKE "%' +cl+ '%" OR class LIKE "%共通%")'; // 現在では「共通」の表記が無くなったため、機能しない。
         }else{
             sql_str += ' AND class LIKE "%' +cl+ '%"';
         }
@@ -518,18 +524,18 @@ $(function() {
                 $('#detail_teacher').text(results.rows.item(0).teacher);
                 $('#detail_grade').text(results.rows.item(0).grade);
                 $('#detail_class').text(results.rows.item(0).class);
+                // $('#detail_tmp1_title').text('連絡'); // 新サイトでは固定
+                $('#detail_tmp1').text(results.rows.item(0).tmp1);
+                // $('#detail_tmp2_title').text('備考'); // 新サイトでは固定
+                $('#detail_tmp2').text(results.rows.item(0).tmp2);
                 if(results.rows.item(0).state == "休"){
                     $('#info_title').text('休講情報');
-                    $('#detail_tmp1_title').text('補講予定');
-                    $('#detail_tmp2_title').text('連絡');
-                    $('#detail_tmp1').text(results.rows.item(0).tmp2);
-                    $('#detail_tmp2').text(results.rows.item(0).tmp1);
+                    // $('#tr_detail_room').css('display', 'hidden'); // 教室の項目を一度なくしてしまうとCSSがくずれる。
+                    $('#detail_room').text('-');
                 }else{
                     $('#info_title').text('補講情報');
-                    $('#detail_tmp1_title').text('教室');
-                    $('#detail_tmp2_title').text('備考');
-                    $('#detail_tmp1').text(results.rows.item(0).tmp1);
-                    $('#detail_tmp2').text(results.rows.item(0).tmp2);
+                    // $('#tr_detail_room').css('display', 'block');
+                    $('#detail_room').text(results.rows.item(0).room);
                 }
             }, errorCB);
         }, errorCB);

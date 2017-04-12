@@ -61,7 +61,6 @@ function get_my_data(){
 // 設定画面の設定ボタンを保存されている値にする
 function update_setting_display(){
     var my_data = get_my_data();
-    console.log("now data: " + my_data);
     $("#select_grade option").attr("selected", false);
     $("#select_class option").attr("selected", false);
 
