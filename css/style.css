@@ -99,6 +99,71 @@
     vertical-align: middle;
 }
 
+/* 時間割変更のテーブル */
+#change_time_table{
+    margin:10px 0 2% 2%;
+    width: 98%;
+    border-collapse: separate;
+    border-spacing: 0px;
+    text-align: left;
+    line-height: 1.5;
+    border-top: 1px solid #ccc;
+}
+#change_time_table th{
+    font-weight: bold;
+    text-align: center;
+    vertical-align: bottom;
+    border-bottom: 1px solid #aaa;
+}
+#change_time_table td{
+    vertical-align: middle;
+    border-bottom: 1px solid #ccc;
+}
+
+.tab_time_day{
+    text-align: center;
+    word-break: keep-all;
+    width: 3em;
+    max_width: 3em;
+}
+.tab_time_befor_time{
+    width: 3.2em;
+    text-align: center;
+}
+.tab_time_after_time{
+    width: 3.2em;
+    text-align: center;
+}
+.tab_time_sub{
+    text-align: left;
+}
+.tab_time_teach{
+    width: 2em;
+}
+
+.td_time_day{
+    text-align: center;
+    line-height: 1.2em;
+}
+.td_time_befor_time{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: large;
+}
+.td_time_after_time{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: large;
+}
+
+.td_time_sub{
+    text-align: center;
+}
+.td_time_teach{
+    text-align: center;
+    width: 2em;
+}
+
 /* 更新時間のフッター */
 #update_time{
     text-align: center;

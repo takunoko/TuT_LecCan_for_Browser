@@ -1,13 +1,17 @@
 // 情報取得元URL
 // var lec_can_page_url="http://ie.takunoko.com/www/pcboard.html";    // 新学校サイト 自宅テストファイル
-var lec_can_page_url="https://kyomu.office.tut.ac.jp/portal/Public/Board/BoardList.aspx";   // 新学校サイト
-// var lec_can_page_url="http://ie.takunoko.com/BoardList.html" // 自宅テストページ(2017/04/12)
+// var lec_can_page_url="https://kyomu.office.tut.ac.jp/portal/Public/Board/BoardList.aspx";   // 新学校サイト
+var lec_can_page_url="http://ie.takunoko.com/BoardList.html" // 自宅テストページ(2017/04/12)
 
 // データベース関連
 var db_name = "info_db";
 // var info_table_name = "info_table";
 var info_table_name = "info_table_v2";
 var hidden_table_name = "hidden_list"
+
+var info_change_time_table_name = "info_change_time_table";
+var info_change_room_table_name = "info_change_room_table";
+
 var db;
 
 // 変数として保存
@@ -162,12 +166,15 @@ function update_info(){
         success: function(res) {
             var dom_parser = new DOMParser();
             var dom_data = dom_parser.parseFromString(res["responseText"], "text/html");
-            // var tb_c_r = dom_data.getElementById('grvCancel').rows;
-            var tb_c_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvCancel').rows;
-            // var tb_s_r = dom_data.getElementById('grvSupplement').rows;
-            var tb_s_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvSupplement').rows;
+            var tb_c_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvCancel').rows; // 休講情報テーブル
+            var tb_s_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvSupplement').rows; // 補講情報テーブル
+            var tb_t_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvScheduleChange').rows; // 時間割変更テーブル
+            var tb_r_r = dom_data.getElementById('ctl00_phContents_ucBoardLctList_grvRoomChange').rows; // 教室変更テーブル
 
-            set_database(tb_c_r, tb_s_r);
+            set_database(tb_c_r, tb_s_r);   // 休講・補講情報
+            set_database_time(tb_t_r); // 時間 割変更情報
+            set_database_room(tb_r_r); // 教室 変更情報
+
             disp_info();
 
             setTimeout(function() {
@@ -236,16 +243,58 @@ function set_database(tb_c_r, tb_s_r){
     }, errorCB);
 }
 
+// 時間割変更情報
+function set_database_time(tb_t_r){
+    var info_data = [];
+    for (var i = 1; i < tb_t_r.length; i++) {
+        var row_data = [];
+        for (var j = 0; j <= 9; j++){
+            row_data[j] = tb_t_r[i].cells[j].innerText.trim(); // trim()を入れると半角スペースが削除される
+        }
+        info_data.push(row_data);
+    }
+
+    db.transaction(function(tx){
+        clear_change_time_table(tx);
+        for (var i = 0; i < info_data.length; i++){
+            insert_change_time_table(tx, info_data[i]);
+        }
+    },errorCB);
+}
+
+// 教室変更情報
+function set_database_room(tb_r_r){
+}
+
 // 休講・補講データの挿入
 function insert_data(tx, data){
     tx.executeSql('INSERT INTO '+info_table_name+' (state, day, time, subject, teacher, grade, class, room, tmp1, tmp2)\
             VALUES ("'+data[0]+'", "'+data[1]+'", "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[8]+'", "'+data[9]+'")');
 }
 
+// 時間変更データの挿入
+function insert_change_time_table(tx, data){
+    tx.executeSql('INSERT INTO '+info_change_time_table_name+' (date, befor_time, after_time, subject, teacher, grade, class, room, remarks)\
+        VALUES ("'+data[1]+'",  "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[8]+'", "'+data[9]+'")');
+    }
+// 教室変更データの挿入
+function insert_change_room_table(tx, data){
+    tx.executeSql('INSERT INTO '+info_change_time_table_name+' (date, befor_room, after_room, time, subject, teacher, grade, class, remarks)\
+        VALUES ("'+data[1]+'",  "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[8]+'", "'+data[9]+'")');
+    }
+
 // infoテーブルの中身を空にする
 function clear_info_data(tx){
     tx.executeSql('DELETE FROM '+info_table_name);
 }
+
+    function clear_change_time_table(tx){
+        tx.executeSql('DELETE FROM '+info_change_time_table_name);
+    }
+
+    function clear_change_room_table(tx){
+        tx.executeSql('DELETE FROM '+info_change_room_table_name);
+    }
 
 // hiddenテーブルの中身を空にする
 function clear_hidden_data(tx){
@@ -256,12 +305,13 @@ function clear_hidden_data(tx){
 function disp_info(){
     var my_data = get_my_data();
     match_str = get_regexp(my_data[0], my_data[1], my_data[2]);
+
+    $('.tr_info').remove();   // 一度すべての情報を削除
     db.transaction(function(tx){
         // このへんの検索から。
         var sql_code = 'SELECT * FROM '+info_table_name+' left join '+hidden_table_name+' USING (subject) ' +match_str+ ' AND hidden_state IS NULL ORDER BY day ASC';
         // console.log("SQL code: " + sql_code);
         tx.executeSql(sql_code, [], function(tx, results){
-            $('.tr_info').remove();   // 一度すべての情報を削除
             for(var i=0; i<results.rows.length; i++){
                 var row_data = "";
                 var day_str = get_day_str(new Date(Number(results.rows.item(i).day)));
@@ -302,6 +352,29 @@ function disp_info(){
         }, errorCB);
     }, errorCB);
 
+    // 時間割変更情報
+    db.transaction(function(tx){
+        var sql_code = 'SELECT * FROM '+info_change_time_table_name+' left join '+hidden_table_name+' USING (subject) ' +match_str+ ' AND hidden_state IS NULL';
+        tx.executeSql(sql_code, [], function(tx, results){
+            for(var i = 0; i < results.rows.length; i++){
+                var row_data = "";
+                row_data += '<tr class="tr_info">';
+                var date_str = results.rows.item(i).date.replace("月", "/").replace("日", "\n");
+                row_data += '<td class="td_time_day tab_time_day" data-no="'+results.rows.item(i).no+'">' +date_str+ '</td>';   // 日付
+                row_data += '<td class="td_time_befor_time tab_time_befor_time">' +results.rows.item(i).befor_time+ '</td>';   // 変更前時間
+                row_data += '<td class="td_time_after_time tab_time_after_time">' +results.rows.item(i).after_time+ '</td>';   // 変更後時間
+                row_data += '<td class="td_time_sub tab_time_sub">' +results.rows.item(i).subject+ '</td>';   // 科目名
+                row_data += '<td class="td_time_teach tab_time_teach">' +results.rows.item(i).teacher+ '</td>';   // 教員名
+                row_data += "</tr>";
+                $('#change_time_table').append(row_data);
+            }
+            if(results.rows.length == 0){
+                var row_data = '<tr class="tr_info" id="no_sub_info"><td colspan="5">表示すべき情報がありません。<td></tr>';
+                $('#change_time_table').append(row_data);
+            }
+        }, errorCB);
+    }, errorCB);
+
     var last_update_time = get_update_time();
     $("#update_time").text("Update: " + last_update_time);
 }
@@ -312,9 +385,11 @@ function disp_info(){
 
 // 空のデータベースを作成
 function create_DB(){
-    // 休講テーブルと補講テーブルの作成
+    // DBテーブルの作成
     db.transaction(create_info_table, errorCB, successCB);
     db.transaction(create_hidden_table, errorCB, successCB);
+    db.transaction(create_info_change_time_table, errorCB, successCB);
+    db.transaction(create_info_change_room_table, errorCB, successCB);
 
     return db;
 }
@@ -336,6 +411,18 @@ function create_info_table(tx) {
     // 番号, 休/補, 日付, 時限, 教科名, 教員名, 学年, 学科
     // tmp1: 学生への連絡/教室, tmp2: 補講の予定/備考
 }
+// 時間割変更テーブルを作成するクエリ
+function create_info_change_time_table(tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS '+info_change_time_table_name+' ( no integer primary key, date, befor_time, after_time, subject, teacher, grade, class, room, remarks)');
+    // 番号, 日付, 変更前, 変更後, 科目名, 教員名, 学年, 学科, 教室, 備考
+}
+
+// 教室変更テーブルを作成するクエリ
+function create_info_change_room_table(tx) {
+    tx.executeSql('CREATE TABLE IF NOT EXISTS '+info_change_room_table_name+' ( no integer primary key, date, befor_room, after_room, time, subject, teacher, grade, class, remarks)');
+    // 番号, 日付, 変更前, 変更後, 曜日講時, 科目名, 教員名, 学年, 学科, 備考
+}
+
 // 非表示科目テーブルを作成するクエリ
 function create_hidden_table(tx){
     // テーブルが作成されていない場合にテーブルを作成する。
@@ -462,8 +549,6 @@ function get_day_str(date){
 
     // 本当に動いてるの..？
     if((ty ))
-
-
         ys = String(y);
 
     ds = d<10 ? "0" + String(d) : ds = String(d);
@@ -524,9 +609,7 @@ $(function() {
                 $('#detail_teacher').text(results.rows.item(0).teacher);
                 $('#detail_grade').text(results.rows.item(0).grade);
                 $('#detail_class').text(results.rows.item(0).class);
-                // $('#detail_tmp1_title').text('連絡'); // 新サイトでは固定
                 $('#detail_tmp1').text(results.rows.item(0).tmp1);
-                // $('#detail_tmp2_title').text('備考'); // 新サイトでは固定
                 $('#detail_tmp2').text(results.rows.item(0).tmp2);
                 if(results.rows.item(0).state == "休"){
                     $('#info_title').text('休講情報');
