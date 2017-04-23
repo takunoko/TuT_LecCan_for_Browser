@@ -1,0 +1,66 @@
+/*教室変更のテーブル */
+#change_room_table{
+    margin:10px 0 2% 2%;
+    width: 98%;
+    border-collapse: separate;
+    border-spacing: 0px;
+    text-align: left;
+    line-height: 1.5;
+    border-top: 1px solid #ccc;
+}
+#change_room_table th{
+    font-weight: bold;
+    text-align: center;
+    vertical-align: bottom;
+    border-bottom: 1px solid #aaa;
+}
+#change_room_table td{
+    vertical-align: middle;
+    border-bottom: 1px solid #ccc;
+}
+
+.tab_room_day{
+    text-align: center;
+    /* word-break: keep-all; 当日のみ の部分で荒れる*/
+    width: 3em;
+    max_width: 3em;
+}
+.tab_room_befor_room{
+    max-width: 3.2em;
+    min-width: 3.2em;
+    text-align: center;
+}
+.tab_room_after_room{
+    max-width: 3.2em;
+    min-width: 3.2em;
+    text-align: center;
+}
+.tab_room_sub{
+    text-align: left;
+}
+.tab_room_teach{
+    width: 2em;
+}
+
+.td_room_day{
+    text-align: center;
+    line-height: 1.2em;
+}
+.td_room_befor_room{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: large;
+}
+.td_room_after_room{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: large;
+}
+
+.td_room_sub{
+    text-align: center;
+}
+.td_room_teach{
+    text-align: center;
+    width: 2em;
+}

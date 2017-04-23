@@ -19,6 +19,9 @@
         <link rel="stylesheet" type="text/css" href="js/DateBox/css/jtsage-datebox.min.css">
 
         <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/lec_can.css">
+        <link rel="stylesheet" type="text/css" href="css/change_time.css">
+        <link rel="stylesheet" type="text/css" href="css/change_room.css">
 
         <!-- GoogleAnalyticsの設定 -->
         <!-- ようわからんけど、これで動くのかな -->
@@ -42,8 +45,6 @@
 
         <title>TuT休講・補講Viewer</title>
     </head>
-
-
 
     <!-- アドセンスリンク -->
     <!-- 起動時にピヨッっと出てきて、引っ込めれば引っ込む仕様みたい -->
@@ -92,7 +93,7 @@
                     </table>
                 </div>
                 <div id="change_time_list">
-                    <h2>教室変更</h2>
+                    <h2>時間変更</h2>
                     <table id="change_time_table">
                         <tr>
                             <th class="th_time_day tab_time_day">日付</th>
@@ -100,6 +101,18 @@
                             <th class="th_time_after_time tab_time_after_time">変更後</th>
                             <th class="th_time_sub tab_time_sub">科目</th>
                             <th class="th_time_teach tab_time_teach">担当</th>
+                        </tr>
+                    </table>
+                </div>
+                <div id="change_room_list">
+                    <h2>教室変更</h2>
+                    <table id="change_room_table">
+                        <tr>
+                            <th class="th_room_day tab_room_day">日付</th>
+                            <th class="th_room_befor_room tab_room_befor_room">変更前</th>
+                            <th class="th_room_after_room tab_room_after_room">変更後</th>
+                            <th class="th_room_sub tab_room_sub">科目</th>
+                            <th class="th_room_teach tab_room_teach">担当</th>
                         </tr>
                     </table>
                 </div>
@@ -182,7 +195,7 @@
                 <h3>免責事項</h3>
                 　このアプリケーションは豊橋技術科学大学の休講・補講情報を閲覧する非公式アプリです。<br />
                 　できるだけミスのないように制作しておりますが、このアプリケーションの使用により生じたいかなる不利益に対しても制作者は一切の責任を負いません。使用者の責任においてご使用ください。<br />
-                　定期的に大学公式サイトの<a href="https://www.ead.tut.ac.jp/board/main.aspx">休講・補講ページ</a>をご覧になることをお勧めします。<br />
+                　定期的に大学公式サイトの<a href="https://kyomu.office.tut.ac.jp/portal/Public/Board/BoardList.aspx">休講・補講ページ</a>をご覧になることをお勧めします。<br />
                 <br />
                 　バグ・改善点などは製作者までおしらせ頂けると幸いです。
                 できる範囲で対応したいと考えております。

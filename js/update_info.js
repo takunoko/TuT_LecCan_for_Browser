@@ -264,6 +264,21 @@ function set_database_time(tb_t_r){
 
 // 教室変更情報
 function set_database_room(tb_r_r){
+    var info_data = [];
+    for (var i = 1; i < tb_r_r.length; i++) {
+        var row_data = [];
+        for (var j = 0; j <= 9; j++){
+            row_data[j] = tb_r_r[i].cells[j].innerText.trim(); // trim()を入れると半角スペースが削除される
+        }
+        info_data.push(row_data);
+    }
+
+    db.transaction(function(tx){
+        clear_change_room_table(tx);
+        for (var i = 0; i < info_data.length; i++){
+            insert_change_room_table(tx, info_data[i]);
+        }
+    },errorCB);
 }
 
 // 休講・補講データの挿入
@@ -279,7 +294,9 @@ function insert_change_time_table(tx, data){
     }
 // 教室変更データの挿入
 function insert_change_room_table(tx, data){
-    tx.executeSql('INSERT INTO '+info_change_time_table_name+' (date, befor_room, after_room, time, subject, teacher, grade, class, remarks)\
+    // var sql_str = 'INSERT INTO '+info_change__table_name+' (date, befor_room, after_room, time, subject, teacher, grade, class, remarks)';
+    // console.log(sql_str);
+    tx.executeSql('INSERT INTO '+info_change_room_table_name+' (date, befor_room, after_room, time, subject, teacher, grade, class, remarks)\
         VALUES ("'+data[1]+'",  "'+data[2]+'", "'+data[3]+'", "'+data[4]+'", "'+data[5]+'", "'+data[6]+'", "'+data[7]+'", "'+data[8]+'", "'+data[9]+'")');
     }
 
@@ -374,6 +391,31 @@ function disp_info(){
             }
         }, errorCB);
     }, errorCB);
+
+    // 教室割変更情報
+    db.transaction(function(tx){
+        var sql_code = 'SELECT * FROM '+info_change_room_table_name+' left join '+hidden_table_name+' USING (subject) ' +match_str+ ' AND hidden_state IS NULL';
+        tx.executeSql(sql_code, [], function(tx, results){
+            for(var i = 0; i < results.rows.length; i++){
+                var row_data = "";
+                row_data += '<tr class="tr_info">';
+                var date_str = results.rows.item(i).date.replace("月", "/").replace("日", "\n");
+                row_data += '<td class="td_room_day tab_room_day" data-no="'+results.rows.item(i).no+'">' +date_str+ '</td>';   // 日付
+                row_data += '<td class="td_room_befor_room tab_room_befor_room">' +results.rows.item(i).befor_room+ '</td>';   // 変更前時間
+                row_data += '<td class="td_room_after_room tab_room_after_room">' +results.rows.item(i).after_room+ '</td>';   // 変更後時間
+                row_data += '<td class="td_room_sub tab_room_sub">' +results.rows.item(i).subject+ '</td>';   // 科目名
+                row_data += '<td class="td_room_teach tab_room_teach">' +results.rows.item(i).teacher+ '</td>';   // 教員名
+                row_data += "</tr>";
+                $('#change_room_table').append(row_data);
+            }
+            if(results.rows.length == 0){
+                var row_data = '<tr class="tr_info" id="no_sub_info"><td colspan="5">表示すべき情報がありません。<td></tr>';
+                $('#change_room_table').append(row_data);
+            }
+        }, errorCB);
+    }, errorCB);
+
+
 
     var last_update_time = get_update_time();
     $("#update_time").text("Update: " + last_update_time);

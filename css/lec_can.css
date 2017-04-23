@@ -1,0 +1,95 @@
+/* --------------- */
+/* 休講 補講ページ */
+/* --------------- */
+#info_table{
+    margin:0 2%;
+    width: 98%;
+    border-collapse: separate;
+    border-spacing: 0px;
+    text-align: left;
+    line-height: 1.5;
+    border-top: 1px solid #ccc;
+}
+#info_table th{
+    font-weight: bold;
+    text-align: center;
+    vertical-align: bottom;
+    border-bottom: 1px solid #aaa;
+}
+#info_table td{
+    vertical-align: middle;
+    border-bottom: 1px solid #ccc;
+}
+
+.tr_today.tr_can{  /* 日付が今日 で 休 の行 */
+    background-color: #cff;
+}
+
+.tr_today.tr_sup{  /* 日付が今日 で 補 の行 */
+    background-color: #fc9;
+}
+
+.tab_today{ /* 日付が今日の文字列について */
+    font-weight: bold;
+    font-size:120%;
+}
+
+.tab_tomorrow{
+    font-size:105%;
+}
+
+#no_sub_info{ /* 表示すべき情報がありません */
+    text-align: center;
+}
+
+.tab_day{ /* 日付 */
+    word-break: keep-all; /* 単語の途中で改行させない */
+    width: 3em;
+}
+.th_state{
+    width: 3em;
+}
+.tab_state{ /* 休講・補講 */
+    text-decoration: none;
+    text-shadow:none;
+}
+.state_can{ /* 休講 */
+    color: #1e90ff;
+}
+.state_sup{ /* 補講 */
+    color: #f93;
+}
+.tab_time{ /* 時限 */
+    width: 13%;
+}
+.tab_sub{ /* 教科名 */
+}
+.tab_teach{ /* 担当 */
+    text-align: center;
+    width: 3em;
+}
+
+.tr_info{
+    width: 100%;
+    height: 50px;
+}
+.td_day{
+    text-align: center;
+    line-height: 1.2em;
+}
+.td_state{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: x-large;
+}
+.td_time{
+    text-align: center;
+    vertical-align: bottom;
+    font-size: x-large;
+}
+.td_sub{
+
+}
+.td_teach{
+
+}
